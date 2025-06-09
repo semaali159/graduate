@@ -8,7 +8,7 @@ const { generateRandomNumber, generateToken } = require("../utils/generateOTP");
 const sendEmail = require("../utils/sendEmail");
 const sequelize = require("../config/config");
 
-const register = asynchandler(async (req, res) => {
+const Register = asynchandler(async (req, res) => {
   const { error } = validateRegister(req.body);
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
@@ -90,7 +90,9 @@ const register = asynchandler(async (req, res) => {
     }
 
     await t.commit();
-    return res.status(201).json({ message: "User registered successfully!" });
+    return res
+      .status(201)
+      .json({ message: "User registered successfully!", userId: user.id });
   } catch (error) {
     await t.rollback();
     console.error("Error during user registration:", error);
@@ -99,4 +101,66 @@ const register = asynchandler(async (req, res) => {
       .json({ message: "An error occurred during registration." });
   }
 });
-module.exports = { register };
+
+const Login = asynchandler(async (req, res) => {
+  const { error } = validateLogin(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+  //add fcm token
+  const { email, password } = req.body;
+  const user = await db.user.findOne({ where: { email } });
+  if (!user) {
+    return res.status(400).json({ message: "invalid email or password" });
+  }
+
+  if (!user.isVerified) {
+    return res
+      .status(400)
+      .json({ message: "Verification faild. please verify your email " });
+  }
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
+  if (!isPasswordMatch) {
+    return res.status(400).json({ message: "invalid email or password" });
+  }
+  //   if (fcmToken && typeof fcmToken === "string") {
+  //     const existToken = await db.fcmToken.findOne({
+  //       where: { token: fcmToken },
+  //     });
+  //     if (!existToken) {
+  //       const newToken = await db.fcmToken.create({
+  //         token: fcmToken,
+  //         userId: user.id,
+  //       });
+  //     }
+  //   }
+  const token = generateToken(user.id, user.isAdmin);
+  return res
+    .status(200)
+    .json({ message: "login successfully", token, userId: user.id });
+});
+const Verification = asynchandler(async (req, res) => {
+  const { email, otpNum } = req.body;
+  const user = await db.user.findOne({ where: { email } });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ message: "Email not found, please register" });
+  }
+  if (!otpNum == user.otpNum) {
+    return res
+      .status(400)
+      .json({ message: "Verification faild, please try again!" });
+  }
+  const [updateRows] = await db.user.update(
+    { isVerified: true },
+    {
+      where: { id: user.id },
+    }
+  );
+
+  return res
+    .status(200)
+    .json({ message: "Verification successfully. please login" });
+});
+module.exports = { Register, Login, Verification };
