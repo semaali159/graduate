@@ -3,6 +3,10 @@ const province = require("./provinces");
 const interest = require("./interest");
 const userInterests = require("./userInterests");
 const userProvinces = require("./userProvinces");
+const relations = require("./relations");
+const publicEvent = require("./publicEvents");
+user.hasMany(publicEvent, { foreignKey: "userId", onDelete: "CASCADE" });
+publicEvent.belongsTo(user, { foreignKey: "userId" });
 // users have many locations
 user.belongsToMany(province, {
   through: userProvinces,
@@ -26,4 +30,24 @@ interest.belongsToMany(user, {
   foreignKey: "interestId",
   as: "users",
 });
-module.exports = { user, province, userInterests, interest, userProvinces };
+user.belongsToMany(user, {
+  through: relations,
+  as: "followers",
+  foreignKey: "followingId",
+  otherKey: "followerId",
+});
+user.belongsToMany(user, {
+  through: relations,
+  as: "following",
+  foreignKey: "followerId",
+  otherKey: "followingId",
+});
+module.exports = {
+  user,
+  province,
+  userInterests,
+  interest,
+  userProvinces,
+  relations,
+  publicEvent,
+};
