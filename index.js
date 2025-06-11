@@ -8,6 +8,8 @@ const profileRoute = require("./routes/profile");
 const eventRoute = require("./routes/publicEvent");
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/api/province", provinceRoute);
 app.use("/api/interest", interestRoute);
 app.use("/api/auth", authRoute);
