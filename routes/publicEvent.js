@@ -13,11 +13,11 @@ const {
 } = require("../middlewares/verifyToken");
 const router = express.Router();
 router.post("/", verifyToken, createEvent);
-router.get("/", getAllEvents);
-router.get("/oneEvent/:id", getEventById);
-router.get("/upcomingEvent", getUpcomingEvents);
+router.get("/", verifyToken, getAllEvents);
+router.get("/oneEvent/:id", verifyToken, getEventById);
+router.get("/upcomingEvent", verifyToken, getUpcomingEvents);
 
-router.get("/pastEvent", getPastEvents);
+router.get("/pastEvent", verifyToken, getPastEvents);
 router.get("/userInterest", verifyToken, getEventByUserInterest);
 // router.put("/:id", updatePhotograph);
 module.exports = router;

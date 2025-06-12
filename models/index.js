@@ -56,4 +56,5 @@ module.exports = {
   userProvinces,
   relations,
   publicEvent,
+  fcmToken,
 };
