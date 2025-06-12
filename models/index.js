@@ -5,8 +5,13 @@ const userInterests = require("./userInterests");
 const userProvinces = require("./userProvinces");
 const relations = require("./relations");
 const publicEvent = require("./publicEvents");
+const fcmToken = require("./fcmToken");
+
+const sequelize = require("../config/config");
 user.hasMany(publicEvent, { foreignKey: "userId", onDelete: "CASCADE" });
 publicEvent.belongsTo(user, { foreignKey: "userId" });
+user.hasMany(fcmToken, { foreignKey: "userId", onDelete: "CASCADE" });
+fcmToken.belongsTo(user, { foreignKey: "userId" });
 // users have many locations
 user.belongsToMany(province, {
   through: userProvinces,
@@ -43,6 +48,7 @@ user.belongsToMany(user, {
   otherKey: "followingId",
 });
 module.exports = {
+  sequelize,
   user,
   province,
   userInterests,

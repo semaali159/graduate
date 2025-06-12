@@ -108,7 +108,7 @@ const Login = asynchandler(async (req, res) => {
     return res.status(400).json({ message: error.details[0].message });
   }
   //add fcm token
-  const { email, password } = req.body;
+  const { email, password, fcmToken } = req.body;
   const user = await db.user.findOne({ where: { email } });
   if (!user) {
     return res.status(400).json({ message: "invalid email or password" });
@@ -123,17 +123,17 @@ const Login = asynchandler(async (req, res) => {
   if (!isPasswordMatch) {
     return res.status(400).json({ message: "invalid email or password" });
   }
-  //   if (fcmToken && typeof fcmToken === "string") {
-  //     const existToken = await db.fcmToken.findOne({
-  //       where: { token: fcmToken },
-  //     });
-  //     if (!existToken) {
-  //       const newToken = await db.fcmToken.create({
-  //         token: fcmToken,
-  //         userId: user.id,
-  //       });
-  //     }
-  //   }
+  if (fcmToken && typeof fcmToken === "string") {
+    const existToken = await db.fcmToken.findOne({
+      where: { fcmToken: fcmToken },
+    });
+    if (!existToken) {
+      const newToken = await db.fcmToken.create({
+        fcmToken: fcmToken,
+        userId: user.id,
+      });
+    }
+  }
   const token = generateToken(user.id, user.isAdmin);
   return res
     .status(200)

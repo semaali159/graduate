@@ -20,13 +20,14 @@ function verifyToken(req, res, next) {
 }
 function verifyTokenAndUser(req, res, next) {
   verifyToken(req, res, () => {
-    if (req.user.role == "admin") {
+    if (req.user.id == req.params.id) {
       next();
     } else {
-      return res.status(403).json({ message: "not allowed, only admin" });
+      return res.status(403).json({ message: "not allowed, only user" });
     }
   });
 }
 module.exports = {
   verifyToken,
+  verifyTokenAndUser,
 };

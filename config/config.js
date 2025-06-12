@@ -2,6 +2,7 @@ const { Sequelize } = require("sequelize");
 require("dotenv").config();
 const sequelize = new Sequelize(process.env.DATA_BASE_URL, {
   dialect: "postgres",
+  logging: console.log,
   protocol: "postgres",
   dialectOptions: {
     ssl: {
