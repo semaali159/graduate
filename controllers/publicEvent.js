@@ -99,12 +99,8 @@ const getEventByUserInterest = asyncHandler(async (req, res) => {
   if (userWithInterests.interests.length === 0) {
     return res.status(404).json({ message: "no interests found" });
   }
-  console.log(userWithInterests.interests);
-  console.log("*****");
-  console.log(userWithInterests.interests.name);
+
   const interestNames = userWithInterests.interests.map((i) => {
-    console.log("*****");
-    console.log(i.name);
     return i.name;
   });
   console.log(interestNames);
@@ -118,7 +114,14 @@ const getEventByUserInterest = asyncHandler(async (req, res) => {
   }
   return res.status(200).json({ message: "events by user's interest", events });
 });
-
+const getUserEvent = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const userEvent = await db.publicEvent.findAll({ where: { userId: id } });
+  if (!userEvent) {
+    return res.status(404).json({ message: "user hasn't any events" });
+  }
+  return res.status(200).json({ message: "user's event", userEvent });
+});
 module.exports = {
   createEvent,
   getAllEvents,
@@ -126,4 +129,5 @@ module.exports = {
   getUpcomingEvents,
   getPastEvents,
   getEventByUserInterest,
+  getUserEvent,
 };

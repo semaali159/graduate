@@ -6,6 +6,7 @@ const {
   getUpcomingEvents,
   getPastEvents,
   getEventByUserInterest,
+  getUserEvent,
 } = require("../controllers/publicEvent");
 const {
   verifyToken,
@@ -16,7 +17,7 @@ router.post("/", verifyToken, createEvent);
 router.get("/", verifyToken, getAllEvents);
 router.get("/oneEvent/:id", verifyToken, getEventById);
 router.get("/upcomingEvent", verifyToken, getUpcomingEvents);
-
+router.get("/userEvent/:id", verifyTokenAndUser, getUserEvent);
 router.get("/pastEvent", verifyToken, getPastEvents);
 router.get("/userInterest", verifyToken, getEventByUserInterest);
 // router.put("/:id", updatePhotograph);
