@@ -9,7 +9,7 @@ const {
   verifyTokenAndUser,
   verifyToken,
 } = require("../middlewares/verifyToken");
-const photoUpload = require("../middlewares/PhotoUpload");
+const photoUpload = require("../middlewares/photoUpload");
 const router = express.Router();
 router.get("/:id", verifyTokenAndUser, getProfile);
 router.get("/interests/:id", verifyTokenAndUser, getUsersInterest);
