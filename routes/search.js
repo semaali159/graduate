@@ -1,7 +1,8 @@
 const express = require("express");
-const { searchByName } = require("../controllers/search");
+const { searchByName, filterEvents } = require("../controllers/search");
 const { verifyToken } = require("../middlewares/verifyToken");
 const router = express.Router();
 router.get("/name", verifyToken, searchByName);
+router.get("/filter", filterEvents);
 
 module.exports = router;

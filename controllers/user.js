@@ -1,7 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../models");
 const sequelize = require("../config/config");
-
+const {
+  cloudinaryUploadBuffer,
+  cloudinaryRemoveImage,
+} = require("../utils/cloudinaryHelpers");
 const getProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   const userProfile = await db.user.findOne({
@@ -90,4 +93,38 @@ const getUserById = asyncHandler(async (req, res) => {
   }
   return res.status(200).json(user);
 });
-module.exports = { getAllUsers, updateProfile, getUserById, getProfile };
+
+const uploadProfilePhotoCtrl = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file provided" });
+  }
+  console.log("ssssssssss");
+
+  const result = await cloudinaryUploadBuffer(req.file.buffer);
+  console.log("ssssssssss");
+  console.log("Cloudinary Result:\n", JSON.stringify(result, null, 2));
+  const user = await db.user.findByPk(req.user.id);
+  console.log("ssssssssss");
+
+  if (user.profilePhotoPublicId) {
+    await cloudinaryRemoveImage(user.profilePhotoPublicId);
+  }
+  console.log("ssssssssss");
+
+  user.image = result.secure_url;
+  user.profilePhotoPublicId = result.public_id;
+  await user.save();
+
+  res.status(200).json({
+    message: "Profile photo uploaded successfully",
+    image: user.image,
+  });
+});
+
+module.exports = {
+  getAllUsers,
+  updateProfile,
+  getUserById,
+  getProfile,
+  uploadProfilePhotoCtrl,
+};
