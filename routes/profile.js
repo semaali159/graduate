@@ -3,6 +3,7 @@ const {
   getProfile,
   updateProfile,
   uploadProfilePhotoCtrl,
+  getUsersInterest,
 } = require("../controllers/user");
 const {
   verifyTokenAndUser,
@@ -11,6 +12,7 @@ const {
 const photoUpload = require("../middlewares/PhotoUpload");
 const router = express.Router();
 router.get("/:id", verifyTokenAndUser, getProfile);
+router.get("/interests/:id", verifyTokenAndUser, getUsersInterest);
 router.put("/edit/:id", verifyToken, updateProfile);
 router.post(
   "/image/:id",

@@ -33,15 +33,6 @@ const getProfile = asyncHandler(async (req, res) => {
         "followingCount",
       ],
     ],
-
-    include: [
-      {
-        model: db.interest,
-        as: "interests",
-        attributes: ["id", "name"],
-        through: { attributes: [] },
-      },
-    ],
   });
   if (!userProfile) {
     return res.status(404).json({ message: "user not found" });
@@ -120,6 +111,28 @@ const uploadProfilePhotoCtrl = asyncHandler(async (req, res) => {
     image: user.image,
   });
 });
+const getUsersInterest = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const userInterest = await db.user.findByPk(userId, {
+    include: [
+      {
+        model: db.interest,
+        as: "interests",
+        attributes: ["id", "name"],
+        through: { attributes: [] },
+      },
+    ],
+  });
+  if (userInterest.length === 0) {
+    res.status(404).json({
+      message: "Interests not found",
+    });
+  }
+  res.status(200).json({
+    message: "User's interests: ",
+    interests: userInterest.interests,
+  });
+});
 
 module.exports = {
   getAllUsers,
@@ -127,4 +140,5 @@ module.exports = {
   getUserById,
   getProfile,
   uploadProfilePhotoCtrl,
+  getUsersInterest,
 };
