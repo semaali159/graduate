@@ -133,7 +133,32 @@ const getUsersInterest = asyncHandler(async (req, res) => {
     interests: userInterest.interests,
   });
 });
+const getAllFollowers = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const followers = await db.follow.findAll({
+    where: { followingId: id },
+    attributes: ["followerId"],
+  });
+  const followerIds = followers.map((f) => f.followerId);
+  const existFollowers = await db.user.findAll({
+    where: { id: { [Op.in]: followerIds } },
+    attributes: [
+      "id",
+      "name",
+      "image",
+      sequelize.literal(`(
+            SELECT COUNT(*)
+            FROM relations AS follow
+            WHERE follow."followingId" = "user"."id"
+          )`),
+    ],
+  });
 
+  if (!existFollowers || existFollowers.length === 0) {
+    return res.status(404).json({ message: "you don't have any follower" });
+  }
+  return res.status(200).json({ message: "your followers ", existFollowers });
+});
 module.exports = {
   getAllUsers,
   updateProfile,
@@ -141,4 +166,5 @@ module.exports = {
   getProfile,
   uploadProfilePhotoCtrl,
   getUsersInterest,
+  getAllFollowers,
 };

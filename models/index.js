@@ -8,10 +8,37 @@ const publicEvent = require("./publicEvents");
 const fcmToken = require("./fcmToken");
 
 const sequelize = require("../config/config");
+const notification = require("./notification");
+const invite = require("./invite");
 user.hasMany(publicEvent, { foreignKey: "userId", onDelete: "CASCADE" });
 publicEvent.belongsTo(user, { foreignKey: "userId" });
 user.hasMany(fcmToken, { foreignKey: "userId", onDelete: "CASCADE" });
 fcmToken.belongsTo(user, { foreignKey: "userId" });
+user.hasMany(notification, {
+  foreignKey: "senderId",
+  onDelete: "CASCADE",
+  as: "sentNotifications",
+});
+notification.belongsTo(user, { foreignKey: "senderId", as: "sender" });
+user.hasMany(notification, {
+  foreignKey: "userId",
+  onDelete: "CASCADE",
+  as: "receivedNotifications",
+});
+notification.belongsTo(user, { foreignKey: "userId", as: "receiver" });
+
+notification.belongsTo(relations, {
+  foreignKey: "sourceId",
+  constraints: false,
+  as: "followData",
+});
+
+notification.belongsTo(invite, {
+  foreignKey: "sourceId",
+  constraints: false,
+  as: "eventInvite",
+});
+
 // users have many locations
 user.belongsToMany(province, {
   through: userProvinces,
@@ -47,6 +74,17 @@ user.belongsToMany(user, {
   foreignKey: "followerId",
   otherKey: "followingId",
 });
+user.belongsToMany(publicEvent, {
+  through: invite,
+  foreignKey: "userId",
+  as: "invitedEvent",
+});
+
+publicEvent.belongsToMany(user, {
+  through: invite,
+  foreignKey: "publicEventId",
+  as: "invitedEvent",
+});
 module.exports = {
   sequelize,
   user,
@@ -57,4 +95,6 @@ module.exports = {
   relations,
   publicEvent,
   fcmToken,
+  notification,
+  invite,
 };
