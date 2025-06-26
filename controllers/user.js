@@ -5,6 +5,7 @@ const {
   cloudinaryUploadBuffer,
   cloudinaryRemoveImage,
 } = require("../utils/cloudinaryHelpers");
+const { Op } = require("sequelize");
 const getProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   const userProfile = await db.user.findOne({
@@ -135,10 +136,14 @@ const getUsersInterest = asyncHandler(async (req, res) => {
 });
 const getAllFollowers = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const followers = await db.follow.findAll({
-    where: { followingId: id },
+  const followers = await db.relations.findAll({
+    where: { followingId: id, status: "accepted" },
     attributes: ["followerId"],
   });
+
+  if (!followers || followers.length === 0) {
+    return res.status(404).json({ message: "you don't have any follower" });
+  }
   const followerIds = followers.map((f) => f.followerId);
   const existFollowers = await db.user.findAll({
     where: { id: { [Op.in]: followerIds } },
