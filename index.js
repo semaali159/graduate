@@ -58,7 +58,7 @@ app.use("/", (req, res) => {
   </head>
   <body>
     <div class="header">
-      <b><h1>Welcome to our EventPop platform</h1></b>
+      <b><h1>Welcome to our platform, EventPop!</h1></b>
     </div>
   </body>
   </html>
