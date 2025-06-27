@@ -122,6 +122,55 @@ const getUserEvent = asyncHandler(async (req, res) => {
   }
   return res.status(200).json({ message: "user's event", userEvent });
 });
+const getEventByUserLocations = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  const userLocation = await db.user.findByPk(userId, {
+    include: [
+      {
+        model: db.userProvinces,
+        as: "userProvinces",
+        attributes: ["provinceId"],
+        through: { attributes: [] },
+      },
+    ],
+  });
+  console.log(userLocation);
+  if (!userLocation || !userLocation.userProvinces?.length) {
+    return res.status(404).json({ message: "user location not found" });
+  }
+
+  const provinceIds = userLocation.userProvinces.map((i) => i.provinceId);
+
+  const provinces = await db.province.findAll({
+    where: { id: provinceIds },
+    attributes: ["boundary"],
+  });
+
+  if (!provinces || provinces.length === 0) {
+    return res.status(404).json({ message: "this location not allowed" });
+  }
+
+  let allEvents = [];
+
+  for (const province of provinces) {
+    const geoJSON = JSON.stringify(province.boundary);
+    const events = await db.publicEvent.findAll({
+      where: Sequelize.where(
+        Sequelize.fn(
+          "ST_Contains",
+          Sequelize.fn("ST_GeomFromGeoJSON", geoJSON),
+          Sequelize.col("location")
+        ),
+        true
+      ),
+    });
+    allEvents = allEvents.concat(events);
+  }
+
+  res.json(allEvents);
+});
+
 module.exports = {
   createEvent,
   getAllEvents,
@@ -130,4 +179,5 @@ module.exports = {
   getPastEvents,
   getEventByUserInterest,
   getUserEvent,
+  getEventByUserLocations,
 };

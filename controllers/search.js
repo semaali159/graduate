@@ -25,24 +25,16 @@ const searchByName = asyncHandler(async (req, res) => {
   return res.status(200).json({ message: "events", events });
 });
 const filterEvents = asyncHandler(async (req, res) => {
-  const {
-    interest,
-    date,
-    priceMin,
-    priceMax,
-    province, // اسم المحافظة
-  } = req.query;
+  const { interest, date, priceMin, priceMax, province } = req.query;
 
   const whereClause = {};
 
-  // فلترة حسب الاهتمامات
   if (interest) {
     whereClause.interest = {
       [Op.in]: Array.isArray(interest) ? interest : [interest],
     };
   }
 
-  // فلترة حسب التاريخ
   if (date) {
     whereClause.date = {
       [Op.between]: [
@@ -52,7 +44,6 @@ const filterEvents = asyncHandler(async (req, res) => {
     };
   }
 
-  // فلترة حسب السعر
   if (priceMin || priceMax) {
     whereClause.price = {};
     if (priceMin) whereClause.price[Op.gte] = parseFloat(priceMin);

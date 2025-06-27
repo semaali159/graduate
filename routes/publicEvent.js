@@ -7,6 +7,7 @@ const {
   getPastEvents,
   getEventByUserInterest,
   getUserEvent,
+  getEventByUserLocations,
 } = require("../controllers/publicEvent");
 const {
   verifyToken,
@@ -20,5 +21,5 @@ router.get("/upcomingEvent", verifyToken, getUpcomingEvents);
 router.get("/userEvent/:id", verifyTokenAndUser, getUserEvent);
 router.get("/pastEvent", verifyToken, getPastEvents);
 router.get("/userInterest", verifyToken, getEventByUserInterest);
-// router.put("/:id", updatePhotograph);
+router.get("/userLocation", verifyToken, getEventByUserLocations);
 module.exports = router;

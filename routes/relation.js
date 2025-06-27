@@ -7,8 +7,6 @@ const {
 const { verifyToken } = require("../middlewares/verifyToken");
 const router = express.Router();
 router.post("/", verifyToken, createRequest);
-// router.get("/", getAllPhotographs);
-// router.get("/:id", getPhotogeaphById);
-router.put("/accepte/:id", accepteRequest);
-router.put("/reject/:id", rejectRequest);
+router.put("/accepte/:id", verifyToken, accepteRequest);
+router.put("/reject/:id", verifyToken, rejectRequest);
 module.exports = router;

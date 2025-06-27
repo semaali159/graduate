@@ -93,7 +93,7 @@ const accepteRequest = asyncHandler(async (req, res) => {
 
   try {
     await db.relations.update(
-      { status: "accepted" },
+      { status: "accepted", isRead: true },
       { where: { id }, transaction: t }
     );
 

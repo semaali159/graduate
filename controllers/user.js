@@ -21,7 +21,7 @@ const getProfile = asyncHandler(async (req, res) => {
         sequelize.literal(`(
       SELECT COUNT(*)
       FROM relations AS follow
-      WHERE follow."followingId" = "user"."id"
+      WHERE follow."followingId" = "user"."id" AND follow."status"  = 'accepted'
     )`),
         "followersCount",
       ],
@@ -29,7 +29,7 @@ const getProfile = asyncHandler(async (req, res) => {
         sequelize.literal(`(
       SELECT COUNT(*)
       FROM relations AS follow
-      WHERE follow."followerId" = "user"."id"
+      WHERE follow."followerId" = "user"."id" AND follow."status"  = 'accepted'
     )`),
         "followingCount",
       ],
