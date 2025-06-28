@@ -90,9 +90,11 @@ const uploadProfilePhotoCtrl = asyncHandler(async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file provided" });
   }
-  console.log("ssssssssss");
 
-  const result = await cloudinaryUploadBuffer(req.file.buffer);
+  const result = await cloudinaryUploadBuffer(
+    req.file.buffer,
+    "profile_photos"
+  );
   console.log("ssssssssss");
   console.log("Cloudinary Result:\n", JSON.stringify(result, null, 2));
   const user = await db.user.findByPk(req.user.id);

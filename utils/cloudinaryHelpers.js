@@ -1,17 +1,20 @@
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
 
-const cloudinaryUploadBuffer = (buffer) => {
+const cloudinaryUploadBuffer = (buffer, folderName = "") => {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream((error, result) => {
-      console.log("Reached callback"); // هل تُطبع؟
-      if (error) {
-        console.error("Upload error:", error);
-        return reject(error);
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "auto",
+        folder: folderName,
+      },
+      (error, result) => {
+        if (error) {
+          return reject(error);
+        }
+        resolve(result);
       }
-      console.log("Upload result:", result);
-      resolve(result);
-    });
+    );
     streamifier.createReadStream(buffer).pipe(stream);
   });
 };

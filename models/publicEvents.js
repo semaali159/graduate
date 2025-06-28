@@ -19,6 +19,10 @@ const publicEvent = sequelize.define("publicEvent", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  imagePublicId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   date: {
     type: DataTypes.DATE,
     allowNull: false,

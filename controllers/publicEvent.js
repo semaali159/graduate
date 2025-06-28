@@ -1,21 +1,37 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../models");
 const { Op, Sequelize } = require("sequelize");
+const { cloudinaryUploadBuffer } = require("../utils/cloudinaryHelpers");
 const createEvent = asyncHandler(async (req, res) => {
-  const { name, date, tickets, price, interest, location, image } = req.body;
+  const { name, date, tickets, price, interest, location, description } =
+    req.body;
+  const parsedLocation = JSON.parse(location);
+
+  if (!req.file) {
+    return res.status(400).json({ message: "Event image is required" });
+  }
+
+  const result = await cloudinaryUploadBuffer(req.file.buffer, "event_photos");
+
   const event = await db.publicEvent.create({
-    image,
+    image: result.secure_url,
+    imagePublicId: result.public_id,
     name,
-    location,
+    location: parsedLocation,
+    description,
     date,
     tickets,
     price,
     interest,
-    description: "enjoi",
     userId: req.user.id,
   });
-  return res.status(201).json({ message: "event added successfully", event });
+
+  return res.status(201).json({
+    message: "Event created successfully",
+    event,
+  });
 });
+
 const getEventById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const event = await db.publicEvent.findByPk(id, {
@@ -170,7 +186,6 @@ const getEventByUserLocations = asyncHandler(async (req, res) => {
 
   res.json(allEvents);
 });
-
 module.exports = {
   createEvent,
   getAllEvents,

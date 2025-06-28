@@ -13,8 +13,9 @@ const {
   verifyToken,
   verifyTokenAndUser,
 } = require("../middlewares/verifyToken");
+const photoUpload = require("../middlewares/photoUpload");
 const router = express.Router();
-router.post("/", verifyToken, createEvent);
+router.post("/", verifyToken, photoUpload.single("image"), createEvent);
 router.get("/", verifyToken, getAllEvents);
 router.get("/oneEvent/:id", verifyToken, getEventById);
 router.get("/upcomingEvent", verifyToken, getUpcomingEvents);
