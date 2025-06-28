@@ -8,6 +8,7 @@ const profileRoute = require("./routes/profile");
 const eventRoute = require("./routes/publicEvent");
 const searchRoute = require("./routes/search");
 const relationRoute = require("./routes/relation");
+const notificationRoute = require("./routes/notification");
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,6 +21,7 @@ app.use("/api/user", userRoute);
 app.use("/api/event", eventRoute);
 app.use("/api/search", searchRoute);
 app.use("/api/follow", relationRoute);
+app.use("/api/notification", notificationRoute);
 sequelize
   .sync({ force: false })
   .then(() => console.log("Database synced successfully"))

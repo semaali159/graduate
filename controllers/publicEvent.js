@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../models");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const createEvent = asyncHandler(async (req, res) => {
   const { name, date, tickets, price, interest, location, image } = req.body;
   const event = await db.publicEvent.create({
@@ -128,25 +128,25 @@ const getEventByUserLocations = asyncHandler(async (req, res) => {
   const userLocation = await db.user.findByPk(userId, {
     include: [
       {
-        model: db.userProvinces,
-        as: "userProvinces",
-        attributes: ["provinceId"],
+        model: db.province,
+        as: "province",
+        attributes: ["gid"],
         through: { attributes: [] },
       },
     ],
   });
-  console.log(userLocation);
-  if (!userLocation || !userLocation.userProvinces?.length) {
-    return res.status(404).json({ message: "user location not found" });
+
+  if (!userLocation || userLocation.length === 0) {
+    return res.status(404).json({ message: "this location not allowed" });
   }
 
-  const provinceIds = userLocation.userProvinces.map((i) => i.provinceId);
+  const provinceIds = userLocation.province.map((i) => i.gid);
 
   const provinces = await db.province.findAll({
-    where: { id: provinceIds },
+    where: { gid: provinceIds },
     attributes: ["boundary"],
   });
-
+  // console.log(provinces);
   if (!provinces || provinces.length === 0) {
     return res.status(404).json({ message: "this location not allowed" });
   }
