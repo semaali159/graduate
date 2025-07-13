@@ -1,16 +1,18 @@
 const express = require("express");
 const sequelize = require("./config/config");
-const provinceRoute = require("./routes/provinces");
-const interestRoute = require("./routes/interest");
-const authRoute = require("./routes/authentication");
-const userRoute = require("./routes/user");
-const profileRoute = require("./routes/profile");
-const eventRoute = require("./routes/publicEvent");
-const searchRoute = require("./routes/search");
-const relationRoute = require("./routes/relation");
-const notificationRoute = require("./routes/notification");
+const provinceRoute = require("././routes/mobile/provinces");
+const interestRoute = require("././routes/mobile/interest");
+const authRoute = require("././routes/mobile/authentication");
+const userRoute = require("././routes/mobile/user");
+const profileRoute = require("././routes/mobile/profile");
+const eventRoute = require("././routes/mobile/publicEvent");
+const searchRoute = require("././routes/mobile/search");
+const relationRoute = require("././routes/mobile/relation");
+const notificationRoute = require("././routes/mobile/notification");
+const homeRoute = require("././routes/dashboard/event");
 const app = express();
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/province", provinceRoute);
@@ -22,6 +24,7 @@ app.use("/api/event", eventRoute);
 app.use("/api/search", searchRoute);
 app.use("/api/follow", relationRoute);
 app.use("/api/notification", notificationRoute);
+app.use("/api/admin/event", homeRoute);
 sequelize
   .sync({ force: false })
   .then(() => console.log("Database synced successfully"))

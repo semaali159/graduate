@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const db = require("../models");
+const db = require("../../models");
 const getAllUserNotification = asyncHandler(async (req, res) => {
   const userId = req.params.id;
   const notifications = await db.notification.findAll({

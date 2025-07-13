@@ -3,7 +3,7 @@ const {
   Register,
   Login,
   Verification,
-} = require("../controllers/authentication");
+} = require("../../controllers/mobile/authentication");
 const router = express.Router();
 router.post("/register", Register);
 router.post("/login", Login);

@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const Province = require("../models/provinces");
+const Province = require("../../models/provinces");
 const getAllProvinces = asyncHandler(async (req, res) => {
   // { attributes: ["adm1_en", "gid"] }
   const provinces = await Province.findAll({ attributes: ["adm1_en", "gid"] });

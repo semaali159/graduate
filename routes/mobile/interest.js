@@ -3,7 +3,7 @@ const {
   createInterest,
   getAllInterests,
   getInterestById,
-} = require("../controllers/interest");
+} = require("../../controllers/mobile/interest");
 const router = express.Router();
 router.post("/", createInterest);
 router.get("/", getAllInterests);

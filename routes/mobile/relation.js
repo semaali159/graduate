@@ -3,8 +3,8 @@ const {
   createRequest,
   accepteRequest,
   rejectRequest,
-} = require("../controllers/privateRequest");
-const { verifyToken } = require("../middlewares/verifyToken");
+} = require("../../controllers/mobile/privateRequest");
+const { verifyToken } = require("../../middlewares/verifyToken");
 const router = express.Router();
 router.post("/", verifyToken, createRequest);
 router.put("/accepte/:id", verifyToken, accepteRequest);

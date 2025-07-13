@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const db = require("../models");
+const db = require("../../models");
 const { Op } = require("sequelize");
 const moment = require("moment");
 

@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const Interest = require("../models/interest");
+const Interest = require("../../models/interest");
 createInterest = asyncHandler(async (req, res) => {
   const name = req.body.name;
   if (!name || typeof name !== "string" || name.trim() === "") {

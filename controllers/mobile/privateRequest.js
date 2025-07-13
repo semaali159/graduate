@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const db = require("../models");
-const sendNotification = require("../utils/sendNotification");
+const db = require("../../models");
+const sendNotification = require("../../utils/sendNotification");
 const { Sequelize } = require("sequelize");
 
 const createRequest = asyncHandler(async (req, res) => {

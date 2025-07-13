@@ -8,12 +8,12 @@ const {
   getEventByUserInterest,
   getUserEvent,
   getEventByUserLocations,
-} = require("../controllers/publicEvent");
+} = require("../../controllers/mobile/publicEvent");
 const {
   verifyToken,
   verifyTokenAndUser,
-} = require("../middlewares/verifyToken");
-const photoUpload = require("../middlewares/photoUpload");
+} = require("../../middlewares/verifyToken");
+const photoUpload = require("../../middlewares/photoUpload");
 const router = express.Router();
 router.post("/", verifyToken, photoUpload.single("image"), createEvent);
 router.get("/", verifyToken, getAllEvents);

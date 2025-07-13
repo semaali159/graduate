@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const db = require("../models");
+const db = require("../../models");
 const { Op, Sequelize } = require("sequelize");
-const { cloudinaryUploadBuffer } = require("../utils/cloudinaryHelpers");
+const { cloudinaryUploadBuffer } = require("../../utils/cloudinaryHelpers");
 const createEvent = asyncHandler(async (req, res) => {
   const { name, date, tickets, price, interest, location, description } =
     req.body;
@@ -67,7 +67,7 @@ const getUpcomingEvents = asyncHandler(async (req, res) => {
     ],
   });
 
-  if (!events) {
+  if (events.length === 0) {
     return res.status(404).json({ message: "No upcoming events found" });
   }
 

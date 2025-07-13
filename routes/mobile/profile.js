@@ -5,12 +5,12 @@ const {
   uploadProfilePhotoCtrl,
   getUsersInterest,
   getAllFollowers,
-} = require("../controllers/user");
+} = require("../../controllers/mobile/user");
 const {
   verifyTokenAndUser,
   verifyToken,
-} = require("../middlewares/verifyToken");
-const photoUpload = require("../middlewares/photoUpload");
+} = require("../../middlewares/verifyToken");
+const photoUpload = require("../../middlewares/photoUpload");
 const router = express.Router();
 router.get("/:id", verifyTokenAndUser, getProfile);
 router.get("/interests/:id", verifyTokenAndUser, getUsersInterest);

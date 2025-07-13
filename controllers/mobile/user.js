@@ -1,10 +1,10 @@
 const asyncHandler = require("express-async-handler");
-const db = require("../models");
-const sequelize = require("../config/config");
+const db = require("../../models");
+const sequelize = require("../../config/config");
 const {
   cloudinaryUploadBuffer,
   cloudinaryRemoveImage,
-} = require("../utils/cloudinaryHelpers");
+} = require("../../utils/cloudinaryHelpers");
 const { Op } = require("sequelize");
 const getProfile = asyncHandler(async (req, res) => {
   const userId = req.params.id;

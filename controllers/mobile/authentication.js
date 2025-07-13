@@ -1,12 +1,15 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
-const db = require("../models");
+const db = require("../../models");
 const asynchandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
-const { validateRegister, validateLogin } = require("../utils/authValidate");
-const { generateRandomNumber, generateToken } = require("../utils/generateOTP");
-const sendEmail = require("../utils/sendEmail");
-const sequelize = require("../config/config");
+const { validateRegister, validateLogin } = require("../../utils/authValidate");
+const {
+  generateRandomNumber,
+  generateToken,
+} = require("../../utils/generateOTP");
+const sendEmail = require("../../utils/sendEmail");
+const sequelize = require("../../config/config");
 
 const Register = asynchandler(async (req, res) => {
   const { error } = validateRegister(req.body);
