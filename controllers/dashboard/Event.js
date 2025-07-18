@@ -52,4 +52,32 @@ const getPastEvents = asyncHandler(async (req, res) => {
   attendes = 100;
   return res.status(200).json({ message: "Past events", events, attendes });
 });
-module.exports = { getUpcomingEvents, getPastEvents };
+const getEventCount = asyncHandler(async (req, res) => {
+  const count = await db.publicEvent.count();
+
+  return res.status(200).json({
+    eventsCount: count,
+  });
+});
+const getEventGroupByLocaion = asyncHandler(async (req, res) => {
+  const [results, metadata] = await db.sequelize.query(`
+  SELECT 
+    p.adm1_en AS province_name,
+    COUNT(e.id) AS event_count
+  FROM provinces p
+  LEFT JOIN "publicEvents" e 
+    ON ST_Contains(p.boundary, e.location)
+  GROUP BY p.adm1_en
+  ORDER BY event_count DESC;
+`);
+  // console.log(metadata);
+  return res.status(200).json({
+    results,
+  });
+});
+module.exports = {
+  getUpcomingEvents,
+  getPastEvents,
+  getEventCount,
+  getEventGroupByLocaion,
+};

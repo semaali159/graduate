@@ -5,6 +5,7 @@ const {
   uploadProfilePhotoCtrl,
   getUsersInterest,
   getAllFollowers,
+  getAllFollowing,
 } = require("../../controllers/mobile/user");
 const {
   verifyTokenAndUser,
@@ -15,6 +16,7 @@ const router = express.Router();
 router.get("/:id", verifyTokenAndUser, getProfile);
 router.get("/interests/:id", verifyTokenAndUser, getUsersInterest);
 router.get("/followers/:id", verifyTokenAndUser, getAllFollowers);
+router.get("/followings/:id", verifyTokenAndUser, getAllFollowing);
 router.put("/edit/:id", verifyToken, updateProfile);
 router.post(
   "/image/:id",

@@ -106,15 +106,15 @@ const accepteRequest = asyncHandler(async (req, res) => {
       include: ["fcmTokens"],
     });
 
-    // await db.notification.destroy({
-    //   where: {
-    //     userId: user2.id,
-    //     senderId: user1.id,
-    //     type: "follow-request",
-    //     sourceId: request.id,
-    //   },
-    //   transaction: t,
-    // });
+    await db.notification.destroy({
+      where: {
+        userId: user2.id,
+        senderId: user1.id,
+        type: "follow-request",
+        sourceId: request.id,
+      },
+      transaction: t,
+    });
 
     await db.notification.create(
       {

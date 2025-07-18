@@ -11,5 +11,14 @@ const fcmToken = sequelize.define("fcmToken", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  userId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: "users",
+      key: "id",
+    },
+    onDelete: "CASCADE",
+  },
 });
 module.exports = fcmToken;
