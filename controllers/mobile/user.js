@@ -79,6 +79,34 @@ const getUserById = asyncHandler(async (req, res) => {
     where: {
       id: userId,
     },
+    attributes: [
+      "name",
+      "image",
+      "about",
+      [
+        sequelize.literal(`(
+      SELECT COUNT(*)
+      FROM relations AS follow
+      WHERE follow."followingId" = "user"."id" AND follow."status"  = 'accepted'
+    )`),
+        "followersCount",
+      ],
+      [
+        sequelize.literal(`(
+      SELECT COUNT(*)
+      FROM relations AS follow
+      WHERE follow."followerId" = "user"."id" AND follow."status"  = 'accepted'
+    )`),
+        "followingCount",
+      ],
+    ],
+    include: [
+      {
+        model: db.publicEvent,
+        // as: "createdEvents",
+        attributes: ["id", "name", "image"],
+      },
+    ],
   });
   if (!user) {
     return res.status(404).json({ message: "user not found" });
@@ -202,6 +230,7 @@ const getAllFollowing = asyncHandler(async (req, res) => {
   }
   return res.status(200).json({ message: "your followers ", existFollowers });
 });
+// const getUserById = asyncHandler(async(req))
 module.exports = {
   getAllUsers,
   updateProfile,
