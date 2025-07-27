@@ -62,9 +62,14 @@ const inviteFrind = asyncHandler(async (req, res) => {
   try {
     await Promise.all(
       followers.map(async (followId) => {
+        console.log(followId);
         const tokens = await db.fcmToken.findAll({
           where: { userId: followId },
         });
+        console.log("**********");
+        console.log(tokens);
+        console.log("**********");
+
         const title = "Event Invite";
         const body = `${organizer.name} invited you to the event "${event.name}"`;
 

@@ -11,10 +11,18 @@ const relationRoute = require("././routes/mobile/relation");
 const notificationRoute = require("././routes/mobile/notification");
 const homeRoute = require("././routes/dashboard/home");
 const inviteFriend = require("././routes/mobile/inviteFriend");
+const cors = require("cors");
+
 const app = express();
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
+app.use(
+  cors({
+    origin: "*", // origin: 'http://localhost:3000'
+  })
+);
+app.use(cors({ credentials: true, origin: true, withCredentials: true }));
 
 app.use("/api/province", provinceRoute);
 app.use("/api/interest", interestRoute);
