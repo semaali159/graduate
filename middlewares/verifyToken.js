@@ -29,7 +29,9 @@ function verifyTokenAndUser(req, res, next) {
 }
 function verifyTokenAndAdmin(req, res, next) {
   verifyToken(req, res, () => {
-    if (req.user.id == req.params.id && req.user.isAdmin) {
+    //req.user.id == req.params.id &&
+    console.log(req.user.isAdmin);
+    if (req.user.isAdmin) {
       next();
     } else {
       return res.status(403).json({ message: "not allowed, only admin" });
