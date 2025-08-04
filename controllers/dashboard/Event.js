@@ -36,10 +36,17 @@ const getPastEvents = asyncHandler(async (req, res) => {
         [Op.lt]: now,
       },
     },
+    // include: [
+    //   {
+    //     model: db.user,
+    //     attributes: ["id", "name", "image"],
+    //   },
+    // ],
+    attributes: ["name", "id", "image"],
     include: [
       {
         model: db.user,
-        attributes: ["id", "name", "image"],
+        attributes: ["id", "name"],
       },
     ],
     order: [["date", "DESC"]],
@@ -75,9 +82,22 @@ const getEventGroupByLocaion = asyncHandler(async (req, res) => {
     results,
   });
 });
+const getEventGroupByMonth = asyncHandler(async (req, res) => {
+  const [results, metadata] = await db.sequelize.query(`
+  SELECT 
+    TO_CHAR(date, 'YYYY-MM') AS month,
+    COUNT(*) AS event_count
+  FROM "publicEvents"
+  GROUP BY month
+  ORDER BY month;
+`);
+
+  res.status(200).json({ results });
+});
 module.exports = {
   getUpcomingEvents,
   getPastEvents,
   getEventCount,
   getEventGroupByLocaion,
+  getEventGroupByMonth,
 };
