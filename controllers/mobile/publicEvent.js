@@ -33,6 +33,10 @@ const createEvent = asyncHandler(async (req, res) => {
 });
 
 const getEventById = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = 2;
+  const offset = (page - 1) * pageSize;
+
   const { id } = req.params;
   const event = await db.publicEvent.findByPk(id, {
     include: [{ model: db.user, attributes: ["id", "name", "image"] }],
@@ -43,14 +47,77 @@ const getEventById = asyncHandler(async (req, res) => {
   return res.status(200).json({ message: "events: ", event });
 });
 const getAllEvents = asyncHandler(async (req, res) => {
-  const events = await db.publicEvent.findAll({
-    attributes: ["id", "name", "image"],
+  const view = req.query.view || "mobile"; // default = mobile
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+  const offset = (page - 1) * pageSize;
+  const { count, rows: events } = await db.publicEvent.findAndCountAll({
+    offset,
+    limit: pageSize,
+    // order: [["date", "ASC"]],
   });
-  if (!events) {
+
+  if (!events || events.length === 0) {
     return res.status(404).json({ message: "events not found" });
   }
-  return res.status(200).json({ message: "events: ", events });
+
+  let result;
+  if (view === "dashboard") {
+    result = events.map((e) => ({
+      id: e.id,
+      name: e.name,
+      image: e.image,
+      date: e.date,
+      // attendees: e.attendee,
+    }));
+  } else {
+    result = events.map((e) => ({
+      id: e.id,
+      name: e.name,
+      image: e.image,
+      date: e.date,
+      location: e.location?.coordinates,
+    }));
+  }
+
+  return res.status(200).json({
+    message: "events",
+    pagination: {
+      totalItems: count,
+      totalPages: Math.ceil(count / pageSize),
+      currentPage: page,
+      pageSize,
+    },
+    result,
+  });
 });
+
+// const getAllEvents = asyncHandler(async (req, res) => {
+//   const view = req.query.view || "mobile";
+//   const events = await db.publicEvent.findAll({});
+//   if (!events) {
+//     return res.status(404).json({ message: "events not found" });
+//   }
+//   let result;
+//   if (view === "dashboard") {
+//     result = events.map((e) => ({
+//       id: e.id,
+//       name: e.name,
+//       image: e.image,
+//       date: e.date,
+//       // attendees: e.attendee,
+//     }));
+//   } else {
+//     result = events.map((e) => ({
+//       id: e.id,
+//       name: e.name,
+//       image: e.image,
+//       date: e.date,
+//       location: e.location.coordinates,
+//     }));
+//   }
+//   return res.status(200).json({ message: "events: ", result });
+// });
 const getUpcomingEvents = asyncHandler(async (req, res) => {
   const now = new Date();
   const events = await db.publicEvent.findAll({
