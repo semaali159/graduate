@@ -59,31 +59,29 @@ const inviteFrind = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Failed to invite followers" });
   }
 
-  try {
+  const tokens = await db.fcmToken.findAll({
+    where: { userId: followers },
+    attributes: ["fcmToken"],
+    raw: true,
+  });
+  console.log(tokens);
+  const validTokens = tokens.map((t) => t.fcmToken).filter(Boolean);
+
+  const title = "Event Invite";
+  const body = `${organizer.name} invited you to the event "${event.name}"`;
+  console.log(validTokens);
+  // for (const token of validTokens) {
+  //   try {
+  //     await sendNotification(token, title, body);
+  //   } catch (err) {
+  //     console.error("Failed to send to token:", token, err);
+  //   }
+  // }
+  if (validTokens.length > 0) {
     await Promise.all(
-      followers.map(async (followId) => {
-        console.log(followId);
-        const tokens = await db.fcmToken.findAll({
-          where: { userId: followId },
-        });
-        console.log("**********");
-        console.log(tokens);
-        console.log("**********");
-
-        const title = "Event Invite";
-        const body = `${organizer.name} invited you to the event "${event.name}"`;
-
-        await Promise.all(
-          tokens.map((tokenObj) =>
-            sendNotification(tokenObj.fcmToken, title, body)
-          )
-        );
-      })
+      validTokens.map((tokenObj) => sendNotification(tokenObj, title, body))
     );
-  } catch (notifErr) {
-    console.error("FCM Notification Error:", notifErr);
   }
-
   return res.status(200).json({ message: "Invitations sent successfully" });
 });
 
