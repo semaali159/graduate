@@ -54,16 +54,16 @@ updateProfile = asyncHandler(async (req, res) => {
 });
 updateUserInterest = asyncHandler(async (req, res) => {
   const userId = req.params.id;
-  const { deletedInterest, updatedInterest } = req.body;
-
-  const [updateRows] = await db.user.update(updates, {
-    where: { id: userId },
-  });
-  if (updateRows === 0) {
+  const { updatedInterest = [] } = req.body;
+  const userData = await db.user.findByPk(userId);
+  if (!userData) {
     return res.status(404).json({ error: "user not found" });
   }
-  return res.status(200).json({ message: "product updated successfully" });
+  await userData.setInterests(updatedInterest);
+
+  return res.status(200).json({ message: "interests updated successfully" });
 });
+
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await db.user.findAll();
   if (!users) {
@@ -240,4 +240,5 @@ module.exports = {
   getUsersInterest,
   getAllFollowers,
   getAllFollowing,
+  updateUserInterest,
 };

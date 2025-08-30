@@ -6,6 +6,7 @@ const {
   getUsersInterest,
   getAllFollowers,
   getAllFollowing,
+  updateUserInterest,
 } = require("../../controllers/mobile/user");
 const {
   verifyTokenAndUser,
@@ -18,6 +19,7 @@ router.get("/interests/:id", verifyTokenAndUser, getUsersInterest);
 router.get("/followers/:id", verifyTokenAndUser, getAllFollowers);
 router.get("/followings/:id", verifyTokenAndUser, getAllFollowing);
 router.put("/edit/:id", verifyToken, updateProfile);
+router.put("/edit/interests/:id", verifyTokenAndUser, updateUserInterest);
 router.post(
   "/image/:id",
   verifyToken,
