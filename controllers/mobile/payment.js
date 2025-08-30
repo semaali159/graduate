@@ -2,6 +2,26 @@ require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const db = require("../../models");
 const asyncHandler = require("express-async-handler");
+const s = asyncHandler(async (req, res) => {
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 6000, // 60.00 USD
+      currency: "usd",
+      payment_method: "pm_card_visa", // هذا اختصار لبطاقة 4242...
+      confirm: true, // يخلي العملية تتم فوراً
+      metadata: {
+        userId: "123",
+        eventId: "456",
+        seats: 2,
+      },
+    });
+
+    res.json(paymentIntent);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 const createPaymentIntent = asyncHandler(async (req, res) => {
   try {
     const { eventId, seats = 1 } = req.body;
@@ -33,4 +53,4 @@ const createPaymentIntent = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "faild" });
   }
 });
-module.exports = { createPaymentIntent };
+module.exports = { createPaymentIntent, s };
