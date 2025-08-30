@@ -13,8 +13,14 @@ const homeRoute = require("././routes/dashboard/home");
 const inviteFriend = require("././routes/mobile/inviteFriend");
 const paymentRoute = require("././routes/mobile/payment");
 const cors = require("cors");
+const handleStripeWebhook = require("./controllers/mobile/stripeWebhook");
 
 const app = express();
+app.post(
+  "/webhook/stripe",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook
+);
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
