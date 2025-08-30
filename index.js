@@ -11,6 +11,7 @@ const relationRoute = require("././routes/mobile/relation");
 const notificationRoute = require("././routes/mobile/notification");
 const homeRoute = require("././routes/dashboard/home");
 const inviteFriend = require("././routes/mobile/inviteFriend");
+const paymentRoute = require("././routes/mobile/payment");
 const cors = require("cors");
 
 const app = express();
@@ -35,6 +36,8 @@ app.use("/api/follow", relationRoute);
 app.use("/api/notification", notificationRoute);
 app.use("/api/admin/home", homeRoute);
 app.use("/api/invite", inviteFriend);
+app.use("/api/payment", paymentRoute);
+
 sequelize
   .sync({ force: false })
   .then(() => console.log("Database synced successfully"))

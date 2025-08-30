@@ -10,6 +10,8 @@ const fcmToken = require("./fcmToken");
 const sequelize = require("../config/config");
 const notification = require("./notification");
 const invite = require("./invite");
+const attendee = require("./attendee");
+const payment = require("./payment");
 user.hasMany(publicEvent, { foreignKey: "userId", onDelete: "CASCADE" });
 publicEvent.belongsTo(user, { foreignKey: "userId" });
 user.hasMany(fcmToken, { foreignKey: "userId", onDelete: "CASCADE" });
@@ -85,6 +87,20 @@ publicEvent.belongsToMany(user, {
   foreignKey: "publicEventId",
   as: "invitedEvent",
 });
+user.belongsToMany(publicEvent, {
+  through: attendee,
+  foreignKey: "userId",
+  as: "attendingEvent",
+});
+
+publicEvent.belongsToMany(user, {
+  through: attendee,
+  foreignKey: "publicEventId",
+  as: "attendees",
+});
+
+attendee.hasOne(payment);
+payment.belongsTo(attendee);
 module.exports = {
   sequelize,
   user,

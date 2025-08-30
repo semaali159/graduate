@@ -7,7 +7,7 @@ const inviteFrind = asyncHandler(async (req, res) => {
   const organizerId = req.user.id;
   const eventId = req.params.id;
   const { followers } = req.body;
-
+  console.log(organizerId);
   if (!Array.isArray(followers) || followers.length === 0) {
     return res.status(400).json({ message: "No followers provided" });
   }
@@ -19,9 +19,12 @@ const inviteFrind = asyncHandler(async (req, res) => {
   if (!event || organizerId !== event.userId) {
     return res.status(403).json({ message: "Not allowed" });
   }
+  console.log(event.userId);
 
   const organizer = await db.user.findByPk(organizerId);
   const transaction = await sequelize.transaction();
+
+  let newlyInvitedUsers = [];
 
   try {
     await Promise.all(
@@ -49,6 +52,8 @@ const inviteFrind = asyncHandler(async (req, res) => {
           },
           { transaction }
         );
+
+        newlyInvitedUsers.push(followId);
       })
     );
 
@@ -59,29 +64,25 @@ const inviteFrind = asyncHandler(async (req, res) => {
     return res.status(500).json({ message: "Failed to invite followers" });
   }
 
-  const tokens = await db.fcmToken.findAll({
-    where: { userId: followers },
-    attributes: ["fcmToken"],
-    raw: true,
-  });
-  console.log(tokens);
-  const validTokens = tokens.map((t) => t.fcmToken).filter(Boolean);
+  if (newlyInvitedUsers.length > 0) {
+    const tokens = await db.fcmToken.findAll({
+      where: { userId: newlyInvitedUsers },
+      attributes: ["fcmToken"],
+      raw: true,
+    });
 
-  const title = "Event Invite";
-  const body = `${organizer.name} invited you to the event "${event.name}"`;
-  console.log(validTokens);
-  // for (const token of validTokens) {
-  //   try {
-  //     await sendNotification(token, title, body);
-  //   } catch (err) {
-  //     console.error("Failed to send to token:", token, err);
-  //   }
-  // }
-  if (validTokens.length > 0) {
-    await Promise.all(
-      validTokens.map((tokenObj) => sendNotification(tokenObj, title, body))
-    );
+    const validTokens = tokens.map((t) => t.fcmToken).filter(Boolean);
+
+    const title = "Event Invite";
+    const body = `${organizer.name} invited you to the event "${event.name}"`;
+
+    if (validTokens.length > 0) {
+      await Promise.all(
+        validTokens.map((token) => sendNotification(token, title, body))
+      );
+    }
   }
+
   return res.status(200).json({ message: "Invitations sent successfully" });
 });
 
