@@ -52,18 +52,18 @@ updateProfile = asyncHandler(async (req, res) => {
   }
   return res.status(200).json({ message: "product updated successfully" });
 });
-// updateUserInterest = asyncHandler(async (req, res) => {
-//   const userId = req.params.id;
-//   const { deletedInterest, updatedInterest } = req.body;
+updateUserInterest = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const { deletedInterest, updatedInterest } = req.body;
 
-//   const [updateRows] = await db.user.update(updates, {
-//     where: { id: userId },
-//   });
-//   if (updateRows === 0) {
-//     return res.status(404).json({ error: "user not found" });
-//   }
-//   return res.status(200).json({ message: "product updated successfully" });
-// });getProfile, ,
+  const [updateRows] = await db.user.update(updates, {
+    where: { id: userId },
+  });
+  if (updateRows === 0) {
+    return res.status(404).json({ error: "user not found" });
+  }
+  return res.status(200).json({ message: "product updated successfully" });
+});
 const getAllUsers = asyncHandler(async (req, res) => {
   const users = await db.user.findAll();
   if (!users) {
