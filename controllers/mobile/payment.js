@@ -5,13 +5,15 @@ const asyncHandler = require("express-async-handler");
 const s = asyncHandler(async (req, res) => {
   try {
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 6000, // 60.00 USD
+      amount: 2000, // المبلغ بالسنت (20.00 USD)
       currency: "usd",
-      payment_method: "pm_card_visa", // هذا اختصار لبطاقة 4242...
-      confirm: true, // يخلي العملية تتم فوراً
+      automatic_payment_methods: {
+        enabled: true,
+        allow_redirects: "never", // عشان يتجاهل طرق الدفع اللي تعمل redirect
+      },
       metadata: {
-        userId: "123",
-        eventId: "456",
+        userId: "151ab96c-a38f-4d26-84be-c693bf20cc5a",
+        eventId: 10,
         seats: 2,
       },
     });
