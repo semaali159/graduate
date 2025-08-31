@@ -49,6 +49,7 @@ const inviteFrind = asyncHandler(async (req, res) => {
             type: "event-invite",
             message: `${organizer.name} invited you to an event`,
             isRead: false,
+            senderId: organizerId,
           },
           { transaction }
         );
