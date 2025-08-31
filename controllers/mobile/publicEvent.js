@@ -3,7 +3,7 @@ const db = require("../../models");
 const { Op, Sequelize } = require("sequelize");
 const { cloudinaryUploadBuffer } = require("../../utils/cloudinaryHelpers");
 const createEvent = asyncHandler(async (req, res) => {
-  const { name, date, tickets, price, interest, location, description } =
+  const { name, date, tickets, price, interest, location, description, time } =
     req.body;
   const parsedLocation = JSON.parse(location);
 
@@ -24,6 +24,7 @@ const createEvent = asyncHandler(async (req, res) => {
     price,
     interest,
     userId: req.user.id,
+    time,
   });
 
   return res.status(201).json({
@@ -68,6 +69,7 @@ const getAllEvents = asyncHandler(async (req, res) => {
       name: e.name,
       image: e.image,
       date: e.date,
+      time: e.time,
       // attendees: e.attendee,
     }));
   } else {
@@ -77,6 +79,7 @@ const getAllEvents = asyncHandler(async (req, res) => {
       image: e.image,
       date: e.date,
       location: e.location?.coordinates,
+      time: e.time,
     }));
   }
 

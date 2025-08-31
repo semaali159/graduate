@@ -7,6 +7,9 @@ const publicEvent = sequelize.define("publicEvent", {
     autoIncrement: true,
     primaryKey: true,
   },
+  time: {
+    type: DataTypes.TIME,
+  },
   availableSeats: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
