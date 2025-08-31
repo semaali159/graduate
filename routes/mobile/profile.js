@@ -7,6 +7,9 @@ const {
   getAllFollowers,
   getAllFollowing,
   updateUserInterest,
+  saveEvent,
+  unSaveEvent,
+  getAllSavedEvents,
 } = require("../../controllers/mobile/user");
 const {
   verifyTokenAndUser,
@@ -18,6 +21,7 @@ router.get("/:id", verifyTokenAndUser, getProfile);
 router.get("/interests/:id", verifyTokenAndUser, getUsersInterest);
 router.get("/followers/:id", verifyTokenAndUser, getAllFollowers);
 router.get("/followings/:id", verifyTokenAndUser, getAllFollowing);
+router.get("/savedEvents/:id", verifyTokenAndUser, getAllSavedEvents);
 router.put("/edit/:id", verifyToken, updateProfile);
 router.put("/edit/interests/:id", verifyTokenAndUser, updateUserInterest);
 router.post(
@@ -26,4 +30,6 @@ router.post(
   photoUpload.single("image"),
   uploadProfilePhotoCtrl
 );
+router.post("/save/:id", verifyToken, saveEvent);
+router.delete("/save/:id", verifyToken, unSaveEvent);
 module.exports = router;

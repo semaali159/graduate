@@ -231,7 +231,43 @@ const getAllFollowing = asyncHandler(async (req, res) => {
   return res.status(200).json({ message: "your followers ", existFollowers });
 });
 // const getUserById = asyncHandler(async(req))
+const saveEvent = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const eventId = req.params.id;
+  await db.savedEvent.create({
+    userId,
+    eventId,
+  });
+  return res.status(201).json({ message: "event saved successfully!" });
+});
+const unSaveEvent = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const eventId = req.params.id;
+  await db.savedEvent.destroy({
+    where: { userId: userId, eventId: eventId },
+  });
+  return res.status(200).json({ message: "event unsaved successfully!" });
+});
+const getAllSavedEvents = asyncHandler(async (req, res) => {
+  const events = await db.publicEvent.findAll({
+    attributes: ["id", "name", "image", "date", "time"],
+    include: [
+      {
+        model: db.user,
+        as: "savers",
+        where: { id: req.params.id },
+        attributes: [],
+        through: { attributes: [] },
+      },
+    ],
+  });
+
+  return res.status(201).json({ message: "your saved events", events });
+});
 module.exports = {
+  saveEvent,
+  unSaveEvent,
+  getAllSavedEvents,
   getAllUsers,
   updateProfile,
   getUserById,
