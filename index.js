@@ -48,6 +48,7 @@ sequelize
   .sync({ force: false })
   .then(() => console.log("Database synced successfully"))
   .catch((error) => console.error("Error syncing database:", error));
+app.use(express.static("public"));
 
 app.use("/", (req, res) => {
   res.send(`<!DOCTYPE html>

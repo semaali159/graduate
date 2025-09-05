@@ -256,6 +256,25 @@ const getEventByUserLocations = asyncHandler(async (req, res) => {
 
   res.json(allEvents);
 });
+const getEventsForMap = asyncHandler(async (req, res) => {
+  const events = await db.publicEvent.findAll({
+    attributes: [
+      "id",
+      "name",
+      "interest",
+      [
+        db.sequelize.literal(`ST_AsGeoJSON("location")::json->'coordinates'`),
+        "coordinates",
+      ],
+    ],
+  });
+
+  if (!events || events.length === 0) {
+    return res.status(404).json({ message: "events not found" });
+  }
+
+  return res.status(200).json({ message: "events", events });
+});
 module.exports = {
   createEvent,
   getAllEvents,
@@ -265,4 +284,5 @@ module.exports = {
   getEventByUserInterest,
   getUserEvent,
   getEventByUserLocations,
+  getEventsForMap,
 };
