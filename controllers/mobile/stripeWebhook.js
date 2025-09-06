@@ -18,7 +18,7 @@ const handleStripeWebhook = async (req, res) => {
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
       const { userId, eventId, seats } = paymentIntent.metadata;
-
+      console.log(userId, eventId, seats);
       try {
         await db.payment.create({
           stripePaymentIntentId: paymentIntent.id,
