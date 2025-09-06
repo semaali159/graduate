@@ -1,7 +1,11 @@
 const { DataTypes, INTEGER, UUID } = require("sequelize");
 const sequelize = require("../config/config");
 const payment = sequelize.define("payment", {
-  id: { type: DataTypes.UUID, allowNull: false, primaryKey: true },
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
+  },
   stripePaymentIntentId: {
     type: DataTypes.STRING,
     unique: true,

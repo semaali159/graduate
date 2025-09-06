@@ -18,7 +18,9 @@ const handleStripeWebhook = async (req, res) => {
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
       const { userId, eventId, seats } = paymentIntent.metadata;
-      console.log(userId, eventId, seats);
+      console.log(`555555${userId}`);
+      console.log(`555555${eventId}`);
+      console.log(`5566${seats}`);
       try {
         await db.payment.create({
           stripePaymentIntentId: paymentIntent.id,
@@ -33,7 +35,7 @@ const handleStripeWebhook = async (req, res) => {
           userId,
           eventId,
           seats,
-          availableSeats: seats,
+          // availableSeats: seats,
         });
 
         const eventRecord = await db.publicEvent.findByPk(eventId);
@@ -41,7 +43,7 @@ const handleStripeWebhook = async (req, res) => {
           eventRecord.availableSeats -= seats;
           await eventRecord.save();
         }
-
+        console.log(`123${eventRecord}`);
         console.log("Payment processed successfully");
       } catch (err) {
         console.error("DB update failed:", err);

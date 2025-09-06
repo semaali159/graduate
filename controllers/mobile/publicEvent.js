@@ -25,6 +25,7 @@ const createEvent = asyncHandler(async (req, res) => {
     interest,
     userId: req.user.id,
     time,
+    availableSeats: tickets,
   });
 
   return res.status(201).json({
