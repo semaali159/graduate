@@ -11,10 +11,10 @@ const attendee = sequelize.define("attendee", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  availableSeats: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
+  // availableSeats: {
+  //   type: DataTypes.INTEGER,
+  //   allowNull: false,
+  // },
   userId: {
     type: DataTypes.UUID,
     allowNull: false,
