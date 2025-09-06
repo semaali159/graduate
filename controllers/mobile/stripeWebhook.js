@@ -10,7 +10,7 @@ const handleStripeWebhook = async (req, res) => {
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
   } catch (err) {
-    console.error(" Webhook verification failed:", err.message);
+    console.error("Webhook verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -18,35 +18,48 @@ const handleStripeWebhook = async (req, res) => {
     case "payment_intent.succeeded": {
       const paymentIntent = event.data.object;
       const { userId, eventId, seats } = paymentIntent.metadata;
-      console.log(`555555${userId}`);
-      console.log(`555555${eventId}`);
-      console.log(`5566${seats}`);
+
+      console.log(">>> Metadata:", userId, eventId, seats);
+
+      const t = await db.sequelize.transaction();
+
       try {
-        await db.payment.create({
-          stripePaymentIntentId: paymentIntent.id,
-          amount: paymentIntent.amount / 100,
-          currency: paymentIntent.currency,
-          status: "succeeded",
-          userId,
-          eventId,
+        const newPayment = await db.payment.create(
+          {
+            stripePaymentIntentId: paymentIntent.id,
+            amount: paymentIntent.amount / 100,
+            currency: paymentIntent.currency,
+            status: "succeeded",
+            userId,
+            eventId,
+          },
+          { transaction: t }
+        );
+        await db.attendee.create(
+          {
+            userId,
+            eventId,
+            seats,
+            // availableSeats: seats,
+            paymentId: newPayment.id,
+          },
+          { transaction: t }
+        );
+
+        const eventRecord = await db.publicEvent.findByPk(eventId, {
+          transaction: t,
         });
 
-        await db.attendee.create({
-          userId,
-          eventId,
-          seats,
-          // availableSeats: seats,
-        });
-
-        const eventRecord = await db.publicEvent.findByPk(eventId);
         if (eventRecord) {
           eventRecord.availableSeats -= seats;
-          await eventRecord.save();
+          await eventRecord.save({ transaction: t });
         }
-        console.log(`123${eventRecord}`);
-        console.log("Payment processed successfully");
+
+        await t.commit();
+        console.log("Payment + Attendee processed successfully");
       } catch (err) {
-        console.error("DB update failed:", err);
+        await t.rollback();
+        console.error("Transaction failed, rolled back:", err);
       }
       break;
     }
