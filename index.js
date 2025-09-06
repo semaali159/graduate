@@ -14,7 +14,7 @@ const inviteFriend = require("././routes/mobile/inviteFriend");
 const paymentRoute = require("././routes/mobile/payment");
 const cors = require("cors");
 const handleStripeWebhook = require("./controllers/mobile/stripeWebhook");
-
+const calendarRoute = require("./routes/dashboard/calendar");
 const app = express();
 app.post(
   "/webhook/stripe",
@@ -41,6 +41,7 @@ app.use("/api/search", searchRoute);
 app.use("/api/follow", relationRoute);
 app.use("/api/notification", notificationRoute);
 app.use("/api/admin/home", homeRoute);
+app.use("/api/admin/calendar", calendarRoute);
 app.use("/api/invite", inviteFriend);
 app.use("/api/payment", paymentRoute);
 
