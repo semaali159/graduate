@@ -111,6 +111,12 @@ publicEvent.belongsToMany(user, {
   otherKey: "userId",
   as: "attendees",
 });
+publicEvent.hasMany(attendee, { foreignKey: "eventId", as: "attendeesList" });
+attendee.belongsTo(publicEvent, { foreignKey: "eventId", as: "publicEvent" });
+
+user.hasMany(attendee, { foreignKey: "userId", as: "attendeeRecords" });
+attendee.belongsTo(user, { foreignKey: "userId", as: "user" });
+
 // Each attendee can have one payment record
 payment.hasOne(attendee, { foreignKey: "paymentId" });
 attendee.belongsTo(payment, { foreignKey: "paymentId" });
@@ -127,6 +133,7 @@ publicEvent.belongsToMany(user, {
 });
 user.hasMany(PasswordResetToken, { foreignKey: "userId", onDelete: "CASCADE" });
 PasswordResetToken.belongsTo(user, { foreignKey: "userId" });
+
 module.exports = {
   PasswordResetToken,
   savedEvent,

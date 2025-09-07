@@ -15,6 +15,7 @@ const paymentRoute = require("././routes/mobile/payment");
 const cors = require("cors");
 const handleStripeWebhook = require("./controllers/mobile/stripeWebhook");
 const calendarRoute = require("./routes/dashboard/calendar");
+const attendeeRoute = require("./routes/dashboard/attendee");
 const resetPasswordRoute = require("./routes/mobile/resetPasword");
 const app = express();
 app.post(
@@ -43,6 +44,7 @@ app.use("/api/follow", relationRoute);
 app.use("/api/notification", notificationRoute);
 app.use("/api/admin/home", homeRoute);
 app.use("/api/admin/calendar", calendarRoute);
+app.use("/api/admin/attendee", attendeeRoute);
 app.use("/api/invite", inviteFriend);
 app.use("/api/payment", paymentRoute);
 app.use("/api/reset-password", resetPasswordRoute);
