@@ -35,7 +35,7 @@ const attendee = sequelize.define("attendee", {
   },
   paymentId: {
     type: DataTypes.UUID,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: "payments",
       key: "id",

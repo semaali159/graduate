@@ -35,17 +35,16 @@ const handleStripeWebhook = async (req, res) => {
           },
           { transaction: t }
         );
+
         await db.attendee.create(
           {
             userId,
             eventId,
             seats,
-            // availableSeats: seats,
             paymentId: newPayment.id,
           },
           { transaction: t }
         );
-
         const eventRecord = await db.publicEvent.findByPk(eventId, {
           transaction: t,
         });

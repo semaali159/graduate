@@ -100,17 +100,19 @@ publicEvent.belongsToMany(user, {
 user.belongsToMany(publicEvent, {
   through: attendee,
   foreignKey: "userId",
+  otherKey: "eventId",
   as: "attendingEvent",
 });
 
 publicEvent.belongsToMany(user, {
   through: attendee,
-  foreignKey: "publicEventId",
+  foreignKey: "eventId",
+  otherKey: "userId",
   as: "attendees",
 });
 // Each attendee can have one payment record
-attendee.hasOne(payment);
-payment.belongsTo(attendee);
+payment.hasOne(attendee, { foreignKey: "paymentId" });
+attendee.belongsTo(payment, { foreignKey: "paymentId" });
 //Users can save events
 user.belongsToMany(publicEvent, {
   through: savedEvent,
