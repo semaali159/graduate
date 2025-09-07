@@ -15,6 +15,7 @@ const paymentRoute = require("././routes/mobile/payment");
 const cors = require("cors");
 const handleStripeWebhook = require("./controllers/mobile/stripeWebhook");
 const calendarRoute = require("./routes/dashboard/calendar");
+const resetPasswordRoute = require("./routes/mobile/resetPasword");
 const app = express();
 app.post(
   "/webhook/stripe",
@@ -44,6 +45,7 @@ app.use("/api/admin/home", homeRoute);
 app.use("/api/admin/calendar", calendarRoute);
 app.use("/api/invite", inviteFriend);
 app.use("/api/payment", paymentRoute);
+app.use("/api/reset-password", resetPasswordRoute);
 
 sequelize
   .sync({ force: false })

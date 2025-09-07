@@ -13,6 +13,7 @@ const invite = require("./invite");
 const attendee = require("./attendee");
 const payment = require("./payment");
 const savedEvent = require("./savedEvent");
+const PasswordResetToken = require("./PasswordResetToken");
 //  A user can create many public events
 user.hasMany(publicEvent, { foreignKey: "userId", onDelete: "CASCADE" });
 publicEvent.belongsTo(user, { foreignKey: "userId" });
@@ -124,8 +125,10 @@ publicEvent.belongsToMany(user, {
   foreignKey: "eventId",
   as: "savers",
 });
-
+user.hasMany(PasswordResetToken, { foreignKey: "userId", onDelete: "CASCADE" });
+PasswordResetToken.belongsTo(user, { foreignKey: "userId" });
 module.exports = {
+  PasswordResetToken,
   savedEvent,
   sequelize,
   user,
@@ -139,5 +142,6 @@ module.exports = {
   notification,
   invite,
   attendee,
+
   payment,
 };
