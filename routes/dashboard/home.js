@@ -5,9 +5,7 @@ const {
   getEventCount,
   getEventGroupByMonth,
 } = require("../../controllers/dashboard/Event");
-const {
-  getUsersCount,
-} = require("../../controllers/dashboard/userStatistics ");
+const { getUsersCount } = require("../../controllers/dashboard/userStatistics");
 const {
   verifyToken,
   verifyTokenAndAdmin,

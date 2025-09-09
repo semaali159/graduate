@@ -1,0 +1,20 @@
+const { Op, Sequelize } = require("sequelize");
+const asyncHandler = require("express-async-handler");
+const db = require("../../models");
+const getUsersCount = asyncHandler(async (req, res) => {
+  const count = await db.user.count();
+
+  return res.status(200).json({
+    usersCount: count,
+  });
+});
+const getAllUesers = asyncHandler(async (req, res) => {
+  const users = await db.user.findAll({
+    attributes: ["name", "email", "phoneNumber", "isVerified"],
+  });
+  if (!users) {
+    return res.status(404).json({ message: "users not found" });
+  }
+  return res.status(200).json({ message: "users:", users });
+});
+module.exports = { getUsersCount, getAllUesers };
