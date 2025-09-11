@@ -5,7 +5,10 @@ const {
   getEventCount,
   getEventGroupByMonth,
 } = require("../../controllers/dashboard/Event");
-const { getUsersCount } = require("../../controllers/dashboard/userStatistics");
+const {
+  getUsersCount,
+  getEarnings,
+} = require("../../controllers/dashboard/userStatistics");
 const {
   verifyToken,
   verifyTokenAndAdmin,
@@ -17,5 +20,6 @@ router.get("/pastEvent", verifyTokenAndAdmin, getPastEvents);
 router.get("/eventByLocation", verifyTokenAndAdmin, getEventGroupByLocaion);
 router.get("/totalEvents", verifyTokenAndAdmin, getEventCount);
 router.get("/totalUsers", verifyTokenAndAdmin, getUsersCount);
+router.get("/totalEarnings", verifyTokenAndAdmin, getEarnings);
 router.get("/eventByMonth", verifyTokenAndAdmin, getEventGroupByMonth);
 module.exports = router;

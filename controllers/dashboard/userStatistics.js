@@ -8,6 +8,13 @@ const getUsersCount = asyncHandler(async (req, res) => {
     usersCount: count,
   });
 });
+const getEarnings = asyncHandler(async (req, res) => {
+  const payment = await db.payment.sum("amount");
+  if (!payment) {
+    return res.status(404).json({ message: "there is no earnings yet" });
+  }
+  return res.status(200).json({ message: "earnings: ", payment });
+});
 const getAllUesers = asyncHandler(async (req, res) => {
   const users = await db.user.findAll({
     attributes: ["name", "email", "phoneNumber", "isVerified"],
@@ -17,4 +24,4 @@ const getAllUesers = asyncHandler(async (req, res) => {
   }
   return res.status(200).json({ message: "users:", users });
 });
-module.exports = { getUsersCount, getAllUesers };
+module.exports = { getUsersCount, getAllUesers, getEarnings };
