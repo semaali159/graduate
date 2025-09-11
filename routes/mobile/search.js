@@ -3,11 +3,16 @@ const {
   searchByName,
   filterEvents,
   findAttendeeByUsername,
+  findUsersByUsername,
 } = require("../../controllers/mobile/search");
-const { verifyToken } = require("../../middlewares/verifyToken");
+const {
+  verifyToken,
+  verifyTokenAndAdmin,
+} = require("../../middlewares/verifyToken");
 const router = express.Router();
 router.get("/name", verifyToken, searchByName);
-router.get("/filter", filterEvents);
-router.get("/attendee", findAttendeeByUsername);
+router.get("/filter", verifyToken, filterEvents);
+router.get("/attendee", verifyTokenAndAdmin, findAttendeeByUsername);
+router.get("/users", verifyTokenAndAdmin, findUsersByUsername);
 
 module.exports = router;

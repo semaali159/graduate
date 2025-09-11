@@ -117,9 +117,35 @@ const findAttendeeByUsername = asyncHandler(async (req, res) => {
       },
     ],
   });
-  if (!attendees) {
+  if (attendees.length === 0) {
     return res.status(404).json({ message: "attendees not found" });
   }
   return res.status(200).json({ message: "attendees", attendees });
 });
-module.exports = { searchByName, filterEvents, findAttendeeByUsername };
+const findUsersByUsername = asyncHandler(async (req, res) => {
+  const { name } = req.query;
+
+  if (!name) {
+    return res
+      .status(400)
+      .json({ message: "Please provide a name to search." });
+  }
+  const users = await db.user.findAll({
+    attributes: ["name", "email", "phoneNumber", "isVerified"],
+    where: {
+      name: {
+        [Op.iLike]: `%${name}%`,
+      },
+    },
+  });
+  if (users.length === 0) {
+    return res.status(404).json({ message: "user not found" });
+  }
+  return res.status(200).json({ message: "users", users });
+});
+module.exports = {
+  searchByName,
+  filterEvents,
+  findAttendeeByUsername,
+  findUsersByUsername,
+};
