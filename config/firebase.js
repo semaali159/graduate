@@ -1,6 +1,6 @@
 const admin = require("firebase-admin");
 // const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG);
-const serviceAccount = JSON.parse(process.env.G_FIREBASE_CONFIG);
+const serviceAccount = JSON.parse(process.env.B_FIREBASE_CONFIG);
 serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
 
 if (!admin.apps.length) {
