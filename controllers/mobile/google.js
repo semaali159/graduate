@@ -1,16 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const admin = require("firebase-admin");
-require("dotenv").config();
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(
-      JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
-    ),
-  });
-}
-
-router.post("/verify-token", async (req, res) => {
+const admin = require("../../config/firebase");
+const asyncHandler = require("express-async-handler");
+const verifiy = asyncHandler(async (req, res) => {
   const { idToken } = req.body;
 
   try {
@@ -33,4 +25,4 @@ router.post("/verify-token", async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = verifiy;
