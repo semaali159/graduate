@@ -88,5 +88,38 @@ const filterEvents = asyncHandler(async (req, res) => {
 
   return res.status(200).json({ message: "filtered events", data: events });
 });
+const findAttendeeByUsername = asyncHandler(async (req, res) => {
+  const { name } = req.query;
 
-module.exports = { searchByName, filterEvents };
+  if (!name) {
+    return res
+      .status(400)
+      .json({ message: "Please provide a name to search." });
+  }
+
+  const attendees = await db.attendee.findAll({
+    attributes: ["seats"],
+    include: [
+      {
+        model: db.publicEvent,
+        as: "publicEvent",
+        attributes: ["name", "date"],
+      },
+      {
+        model: db.user,
+        as: "user",
+        attributes: ["name", "phoneNumber"],
+        where: name
+          ? {
+              name: { [Op.iLike]: `%${name}%` },
+            }
+          : undefined,
+      },
+    ],
+  });
+  if (!attendees) {
+    return res.status(404).json({ message: "attendees not found" });
+  }
+  return res.status(200).json({ message: "attendees", attendees });
+});
+module.exports = { searchByName, filterEvents, findAttendeeByUsername };
