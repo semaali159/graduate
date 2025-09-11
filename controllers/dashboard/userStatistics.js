@@ -9,11 +9,13 @@ const getUsersCount = asyncHandler(async (req, res) => {
   });
 });
 const getEarnings = asyncHandler(async (req, res) => {
-  const payment = await db.payment.sum("amount");
-  if (!payment) {
+  const payment = await db.payment.sum("amount", {
+    where: { status: "succeeded" },
+  });
+  if (payment === null) {
     return res.status(404).json({ message: "there is no earnings yet" });
   }
-  return res.status(200).json({ message: "earnings: ", payment });
+  return res.status(200).json({ earnings: payment });
 });
 const getAllUesers = asyncHandler(async (req, res) => {
   const users = await db.user.findAll({
