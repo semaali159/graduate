@@ -7,7 +7,7 @@ const verifiy = asyncHandler(async (req, res) => {
   console.log(idToken);
   console.log(admin);
   try {
-    const decodedToken = await admin.getAuth().verifyIdToken(idToken);
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
     console.log(decodedToken);
 
     const { uid, email, name, picture } = decodedToken;
