@@ -5,8 +5,9 @@ const asyncHandler = require("express-async-handler");
 const verifiy = asyncHandler(async (req, res) => {
   const { idToken } = req.body;
   console.log(idToken);
+  console.log(admin);
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const decodedToken = await admin.getAuth().verifyIdToken(idToken);
     console.log(decodedToken);
 
     const { uid, email, name, picture } = decodedToken;
