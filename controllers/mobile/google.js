@@ -3,11 +3,11 @@ const router = express.Router();
 const admin = require("../../config/firebase");
 const asyncHandler = require("express-async-handler");
 const verifiy = asyncHandler(async (req, res) => {
-  const { idToken } = req.body;
+  const idToken = req.body.idToken;
   console.log(idToken);
   console.log(admin);
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const decodedToken = await admin.auth().verifyIdToken(idToken, true);
     console.log(decodedToken);
 
     const { uid, email, name, picture } = decodedToken;
