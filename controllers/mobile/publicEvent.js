@@ -276,7 +276,26 @@ const getEventsForMap = asyncHandler(async (req, res) => {
 
   return res.status(200).json({ message: "events", events });
 });
+const getAttendeByEventId = asyncHandler(async (req, res) => {
+  const eventId = req.params;
+  const userId = req.user.userId;
+  const attendee = await db.attendee.findAll({
+    where: { eventId: eventId.id },
+    include: [
+      {
+        model: db.user,
+        attributes: ["id", "name", "image"],
+        as: attendingEvent,
+      },
+    ],
+  });
+  if (attendee.length === 0) {
+    return res.status(404).json({ message: "No attendance for this event" });
+  }
+  return res.status(200).json({ attendee: attendee });
+});
 module.exports = {
+  getAttendeByEventId,
   createEvent,
   getAllEvents,
   getEventById,

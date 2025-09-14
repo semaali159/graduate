@@ -9,6 +9,7 @@ const {
   getUserEvent,
   getEventByUserLocations,
   getEventsForMap,
+  getAttendeByEventId,
 } = require("../../controllers/mobile/publicEvent");
 const {
   verifyToken,
@@ -24,5 +25,6 @@ router.get("/userEvent/:id", verifyTokenAndUser, getUserEvent);
 router.get("/pastEvent", verifyToken, getPastEvents);
 router.get("/userInterest", verifyToken, getEventByUserInterest);
 router.get("/userLocation", verifyToken, getEventByUserLocations);
+router.get("/attendee/:id", verifyToken, getAttendeByEventId);
 router.get("/map", verifyToken, getEventsForMap);
 module.exports = router;
