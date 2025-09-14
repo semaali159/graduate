@@ -183,7 +183,7 @@ const GoogleLogin = asynchandler(async (req, res) => {
 
     // check if user exists
     let user = await db.user.findOne({ where: { email } });
-
+    let register = false;
     if (!user) {
       // create new user
       user = await db.user.create({
@@ -194,6 +194,7 @@ const GoogleLogin = asynchandler(async (req, res) => {
         isVerified: true,
         image: photoURL || null,
       });
+      register = true;
     }
     //add fcm token
     if (fcmToken && typeof fcmToken === "string") {
@@ -214,6 +215,7 @@ const GoogleLogin = asynchandler(async (req, res) => {
       message: "Login with Google successful",
       token,
       userId: user.id,
+      register,
     });
   } catch (error) {
     console.error("Error verifying Google user:", error);
