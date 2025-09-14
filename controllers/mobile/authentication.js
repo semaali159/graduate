@@ -222,5 +222,31 @@ const GoogleLogin = asynchandler(async (req, res) => {
     return res.status(401).json({ message: "Google authentication failed" });
   }
 });
-
-module.exports = { Register, Login, Verification, GoogleLogin };
+const CompleteRegister = asynchandler(async (req, res) => {
+  const userId = req.params.id;
+  const { provinces, interests } = req.body;
+  const user = await db.user.findByPk(userId);
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  if (interests && interests.length > 0) {
+    const interestRecords = await db.interest.findAll({
+      where: { name: interests },
+    });
+    await user.setInterests(interestRecords);
+  }
+  if (provinces && provinces.length > 0) {
+    const provinceRecords = await db.province.findAll({
+      where: { adm1_en: provinces },
+    });
+    await user.setProvince(provinceRecords);
+  }
+  return res.status(200).json({ message: "Profile updated successfully" });
+});
+module.exports = {
+  Register,
+  Login,
+  Verification,
+  GoogleLogin,
+  CompleteRegister,
+};
