@@ -168,7 +168,7 @@ const Verification = asynchandler(async (req, res) => {
     .json({ message: "Verification successfully. please login" });
 });
 const GoogleLogin = asynchandler(async (req, res) => {
-  const { uid } = req.body;
+  const { uid, fcmToken } = req.body;
   if (!uid) {
     return res.status(400).json({ message: "Missing uid" });
   }
@@ -195,7 +195,18 @@ const GoogleLogin = asynchandler(async (req, res) => {
         image: photoURL || null,
       });
     }
-
+    //add fcm token
+    if (fcmToken && typeof fcmToken === "string") {
+      const existToken = await db.fcmToken.findOne({
+        where: { fcmToken: fcmToken },
+      });
+      if (!existToken) {
+        const newToken = await db.fcmToken.create({
+          fcmToken: fcmToken,
+          userId: user.id,
+        });
+      }
+    }
     // generate JWT
     const token = generateToken(user.id, user.isAdmin);
 
