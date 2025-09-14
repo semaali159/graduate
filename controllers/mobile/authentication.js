@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const db = require("../../models");
 const asynchandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
+admin = require("../../config/firebase");
 const { validateRegister, validateLogin } = require("../../utils/authValidate");
 const {
   generateRandomNumber,
@@ -166,4 +167,47 @@ const Verification = asynchandler(async (req, res) => {
     .status(200)
     .json({ message: "Verification successfully. please login" });
 });
-module.exports = { Register, Login, Verification };
+const GoogleLogin = asynchandler(async (req, res) => {
+  const { uid } = req.body;
+  if (!uid) {
+    return res.status(400).json({ message: "Missing uid" });
+  }
+
+  try {
+    const decodedUser = await admin.auth().getUser(uid);
+    const { email, displayName, photoURL } = decodedUser;
+
+    if (!email) {
+      return res.status(400).json({ message: "Google account has no email" });
+    }
+
+    // check if user exists
+    let user = await db.user.findOne({ where: { email } });
+
+    if (!user) {
+      // create new user
+      user = await db.user.create({
+        name: displayName || "No name",
+        email,
+        password: null,
+        isAdmin: false,
+        isVerified: true,
+        image: photoURL || null,
+      });
+    }
+
+    // generate JWT
+    const token = generateToken(user.id, user.isAdmin);
+
+    return res.status(200).json({
+      message: "Login with Google successful",
+      token,
+      userId: user.id,
+    });
+  } catch (error) {
+    console.error("Error verifying Google user:", error);
+    return res.status(401).json({ message: "Google authentication failed" });
+  }
+});
+
+module.exports = { Register, Login, Verification, GoogleLogin };
