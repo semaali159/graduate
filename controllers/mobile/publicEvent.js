@@ -285,7 +285,7 @@ const getAttendeByEventId = asyncHandler(async (req, res) => {
       {
         model: db.user,
         attributes: ["id", "name", "image"],
-        as: attendingEvent,
+        as: "user",
       },
     ],
   });
