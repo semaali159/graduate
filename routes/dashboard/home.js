@@ -8,6 +8,7 @@ const {
 const {
   getUsersCount,
   getEarnings,
+  getUsersWithEvents,
 } = require("../../controllers/dashboard/userStatistics");
 const {
   verifyToken,
@@ -22,4 +23,5 @@ router.get("/totalEvents", verifyTokenAndAdmin, getEventCount);
 router.get("/totalUsers", verifyTokenAndAdmin, getUsersCount);
 router.get("/totalEarnings", verifyTokenAndAdmin, getEarnings);
 router.get("/eventByMonth", verifyTokenAndAdmin, getEventGroupByMonth);
+router.get("/usersWithEvents", verifyTokenAndAdmin, getUsersWithEvents);
 module.exports = router;

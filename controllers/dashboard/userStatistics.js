@@ -36,5 +36,36 @@ const attendeeRate = asyncHandler(async (req, res) => {
   }
   return res.status(200).json({ attendeeRate: attendeeRate });
 });
+const getUsersWithEvents = asyncHandler(async (req, res) => {
+  const totalUsers = await db.user.count();
 
-module.exports = { getUsersCount, getAllUesers, getEarnings, attendeeRate };
+  if (totalUsers === 0) {
+    return res.status(404).json({ message: "user not found" });
+  }
+
+  const usersWithEvents = await db.user.count({
+    include: [
+      {
+        model: db.publicEvent,
+        required: true,
+      },
+    ],
+    distinct: true,
+  });
+  console.log(usersWithEvents);
+  console.log(totalUsers);
+
+  const percentage = ((usersWithEvents / totalUsers) * 100).toFixed(2);
+
+  return res.status(200).json({
+    percentage: `${percentage}%`,
+  });
+});
+
+module.exports = {
+  getUsersCount,
+  getAllUesers,
+  getEarnings,
+  attendeeRate,
+  getUsersWithEvents,
+};
