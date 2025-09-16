@@ -10,6 +10,7 @@ const {
   saveEvent,
   unSaveEvent,
   getAllSavedEvents,
+  deleteAccount,
 } = require("../../controllers/mobile/user");
 const {
   verifyTokenAndUser,
@@ -32,4 +33,5 @@ router.post(
 );
 router.post("/save/:id", verifyToken, saveEvent);
 router.delete("/save/:id", verifyToken, unSaveEvent);
+router.delete("/delete-account/:id", verifyTokenAndUser, deleteAccount);
 module.exports = router;

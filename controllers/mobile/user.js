@@ -264,6 +264,19 @@ const getAllSavedEvents = asyncHandler(async (req, res) => {
 
   return res.status(201).json({ message: "your saved events", events });
 });
+const deleteAccount = asyncHandler(async (req, res) => {
+  const userId = req.params.id;
+  const user = await db.user.findOne({ where: { id: userId } });
+  if (!user) {
+    return res.status(404).json({ message: "user not found" });
+  }
+  const deletedRows = await db.user.destroy({ where: { id: userId } });
+  if (deletedRows === 0) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  return res.status(200).json({ message: "User deleted successfully" });
+});
 module.exports = {
   saveEvent,
   unSaveEvent,
@@ -277,4 +290,5 @@ module.exports = {
   getAllFollowers,
   getAllFollowing,
   updateUserInterest,
+  deleteAccount,
 };
