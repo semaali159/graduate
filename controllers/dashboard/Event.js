@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const db = require("../../models");
-const { Op, Sequelize } = require("sequelize");
+const { Op, fn, col } = require("sequelize");
+
 const getUpcomingEvents = asyncHandler(async (req, res) => {
   const now = new Date();
   const events = await db.publicEvent.findAll({
@@ -9,13 +10,26 @@ const getUpcomingEvents = asyncHandler(async (req, res) => {
         [Op.gt]: now,
       },
     },
-    attributes: ["name", "id", "image"],
+    attributes: [
+      "name",
+      "id",
+      "image",
+      [fn("COALESCE", fn("SUM", col("attendeesList.seats")), 0), "attendees"],
+    ],
     include: [
+      {
+        model: db.attendee,
+        as: "attendeesList",
+        attributes: [],
+      },
       {
         model: db.user,
         attributes: ["id", "name"],
+        required: false,
       },
     ],
+    group: ["publicEvent.id", "user.id"],
+    subQuery: false,
     order: [["date", "DESC"]],
     limit: 4,
   });
@@ -23,42 +37,50 @@ const getUpcomingEvents = asyncHandler(async (req, res) => {
   if (events.length === 0) {
     return res.status(404).json({ message: "No upcoming events found" });
   }
-  attende = 70;
 
-  return res.status(200).json({ message: "Upcoming events", events, attende });
+  return res.status(200).json({ message: "Upcoming events", events });
 });
 
 const getPastEvents = asyncHandler(async (req, res) => {
   const now = new Date();
   const events = await db.publicEvent.findAll({
     where: {
-      date: {
-        [Op.lt]: now,
-      },
+      date: { [Op.lt]: now },
     },
-    // include: [
-    //   {
-    //     model: db.user,
-    //     attributes: ["id", "name", "image"],
-    //   },
-    // ],
-    attributes: ["name", "id", "image"],
+    attributes: [
+      "id",
+      "name",
+      "image",
+      [fn("COALESCE", fn("SUM", col("attendeesList.seats")), 0), "attendees"],
+    ],
     include: [
+      {
+        model: db.attendee,
+        as: "attendeesList",
+        attributes: [],
+      },
       {
         model: db.user,
         attributes: ["id", "name"],
+        required: false,
       },
     ],
+    group: ["publicEvent.id", "user.id"],
+    subQuery: false,
     order: [["date", "DESC"]],
     limit: 4,
   });
 
-  if (events.length === 0) {
+  if (!events.length) {
     return res.status(404).json({ message: "no events found" });
   }
-  attendes = 100;
-  return res.status(200).json({ message: "Past events", events, attendes });
+
+  return res.status(200).json({
+    message: "Past events",
+    events,
+  });
 });
+
 const getEventCount = asyncHandler(async (req, res) => {
   const count = await db.publicEvent.count();
 
