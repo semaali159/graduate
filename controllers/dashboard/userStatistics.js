@@ -1,6 +1,7 @@
 const { Op, Sequelize } = require("sequelize");
 const asyncHandler = require("express-async-handler");
 const db = require("../../models");
+const calculateAttendanceRate = require("../../utils/attendeeRateCal");
 const getUsersCount = asyncHandler(async (req, res) => {
   const count = await db.user.count();
 
@@ -26,4 +27,14 @@ const getAllUesers = asyncHandler(async (req, res) => {
   }
   return res.status(200).json({ message: "users:", users });
 });
-module.exports = { getUsersCount, getAllUesers, getEarnings };
+const attendeeRate = asyncHandler(async (req, res) => {
+  const eventId = req.params.id;
+  const attendeeRate = await calculateAttendanceRate(eventId);
+  console.log(attendeeRate);
+  if (!attendeeRate) {
+    return res.status(404).json({ message: "there is not attendee now" });
+  }
+  return res.status(200).json({ attendeeRate: attendeeRate });
+});
+
+module.exports = { getUsersCount, getAllUesers, getEarnings, attendeeRate };
